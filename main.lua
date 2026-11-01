@@ -1,3 +1,9 @@
+local dirX = 1
+local dirY = 0
+local timer = 0
+local move_interval = 0.2
+
+
 function love.load()
     -- apple
     appleImage = love.graphics.newImage("assets/apple.png")
@@ -42,32 +48,44 @@ function love.draw()
     local snakeTailScaleX = snakeSize / snakeTailImage:getWidth()
     local snakeTailScaleY = snakeSize / snakeTailImage:getHeight()
 
-    -- draw snake head, body, tail
-    love.graphics.draw(snakeHeadImage, snake[1].x * snakeSize, snake[1].y * snakeSize, 0, snakeScaleX, snakeScaleY)
-    
-    for i = 2, #snake - 1 do
-        love.graphics.draw(snakeBodyImage, snake[i].x * snakeSize, snake[i].y * snakeSize, 0, snakeBodyScaleX, snakeBodyScaleY)
-    end
+    -- draw snake head
+    local headAngle = math.atan2(dirY, dirX)
+    love.graphics.draw(snakeHeadImage, snake[1].x * snakeSize + (snakeSize / 2), snake[1].y * snakeSize + (snakeSize / 2), headAngle, snakeScaleX, snakeScaleY, snakeHeadImage:getWidth() / 2, snakeHeadImage:getHeight() / 2)
 
-    love.graphics.draw(snakeTailImage, snake[3].x * snakeSize, snake[3].y * snakeSize, 0, snakeTailScaleX, snakeTailScaleY)
+    -- draw snake body
+    local bodyAngle = math.atan2(dirY, dirX)
+    love.graphics.draw(snakeBodyImage, snake[2].x * snakeSize + (snakeSize / 2), snake[2].y * snakeSize + (snakeSize / 2), bodyAngle, snakeBodyScaleX, snakeBodyScaleY, snakeBodyImage:getWidth() / 2, snakeBodyImage:getHeight() / 2)
+     -- draw snake tail
+     local tailAngle = math.atan2(dirY, dirX)
+     love.graphics.draw(snakeTailImage, snake[3].x * snakeSize + (snakeSize / 2), snake[3].y * snakeSize + (snakeSize / 2), tailAngle, snakeTailScaleX, snakeBodyScaleY, snakeTailImage:getWidth() / 2, snakeTailImage:getHeight() / 2)
 end
 
+
 function love.update(dt)
-    local dirX = 1
-    local dirY = 0
 
     if love.keyboard.isDown("w") and dirY ~= 1 then
         dirX = 0
         dirY = -1
     elseif love.keyboard.isDown("s") and dirY ~= -1 then
-        dirX = -1
-        dirY = 0   
+        dirX = 0
+        dirY = 1   
     elseif love.keyboard.isDown("a") and dirX ~= 1 then
         dirX = -1
         dirY = 0
-    elseif love.keyboard.isDown("d") and dirY ~= -1 then
+    elseif love.keyboard.isDown("d") and dirX ~= -1 then
         dirX = 1
         dirY = 0
     end
+
+    timer = timer + dt
+    if timer >= move_interval then
+        timer = timer - move_interval
+
+        local nextX = snake[1].x + dirX
+        local nextY = snake[1].y + dirY
+
+        table.insert(snake, 1, {x = nextX, y = nextY})
+        table.remove(snake)
+    end
     
-    
+end    
