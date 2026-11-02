@@ -1,17 +1,11 @@
 
--- Movement direction
-local dir_x = 1
-local dir_y = 0
-
--- Movement speed
-local timer = 0
-local move_interval = 0.2
+local snake_move = require("src.snake_move")
 
 function love.load()
     -- Apple
     apple_image = love.graphics.newImage("assets/apple.png")
     apple_size = 30
-    apple = { x = 10, y = 10 }
+    apple = {x = 10, y = 10}
 
     -- Head sprites
     head_images = {
@@ -61,6 +55,9 @@ function love.draw()
         scale_x,
         scale_y
     )
+
+    -- Get direction from snake_move.lua
+    local dir_x, dir_y = snake_move.get_direction()
 
     -- Select head direction
     local current_head_img = head_images.right
@@ -153,33 +150,5 @@ function love.draw()
 end
 
 function love.update(dt)
-    -- Keyboard movement (WASD)
-    if love.keyboard.isDown("w") and dir_y ~= 1 then
-        dir_x = 0
-        dir_y = -1
-    elseif love.keyboard.isDown("s") and dir_y ~= -1 then
-        dir_x = 0
-        dir_y = 1
-    elseif love.keyboard.isDown("a") and dir_x ~= 1 then
-        dir_x = -1
-        dir_y = 0
-    elseif love.keyboard.isDown("d") and dir_x ~= -1 then
-        dir_x = 1
-        dir_y = 0
-    end
-
-    -- Count time between movements
-    timer = timer + dt
-
-    if timer >= move_interval then
-        timer = timer - move_interval
-
-        -- Calculate next head position
-        local next_x = snake[1].x + dir_x
-        local next_y = snake[1].y + dir_y
-
-        -- Add new head and remove old tail
-        table.insert(snake, 1, {x = next_x, y = next_y})
-        table.remove(snake)
-    end
+    snake_move.update(dt, snake)
 end
