@@ -35,7 +35,7 @@ function love.load()
         right = love.graphics.newImage("assets/tail_right.png")
     }
 
-    -snake sizes
+    --snake sizes
     snakeSize = 30
     snake = {
         {x = 12, y = 12},
@@ -85,7 +85,7 @@ function love.draw()
         love.graphics.draw(img, current.x * snakeSize, current.y * snakeSize, 0, snakeSize / img:getWidth(), snakeSize / img:getHeight())
     end
 
-    local tailIndex = #snake
+    local tailIndex = #s#snake
     local tail = snake[tailIndex]
     local bodyBefore = snake[tailIndex-1]
     local currentTailImg = tailImages.left
